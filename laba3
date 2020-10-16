@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+
+char* difference(int day1, int month1, int yea1r, int day2, int month2, int year2);
+
+int main()
+{
+    int d1, m1, y1, d2, m2, y2;
+    printf("Enter first date (day month year): ");
+    scanf("%d %d %d", &d1, &m1, &y1);                             //данные вводятся через пробел, например 10 6 2000
+    printf("Enter second date (day month year): ");
+    scanf("%d %d %d", &d2, &m2, &y2);
+    printf("Date1 - Date2 = %s\n", difference(d1, m1, y1, d2, m2, y2));
+    return 0;
+}
+
+int leap(int y)
+{
+    return (int)((y % 4 == 0 && y % 100 != 0) || y % 400);
+}
+
+int maxday(int month, int year)
+{
+    int days[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+    if (leap(year))days[1] = 29;
+    return days[month - 1];
+}
+
+char* difference(int day1, int month1, int year1, int day2, int month2, int year2)
+{
+    int d, m, y;
+    char date[128];
+    if (year1 >= year2) {
+        y = year1 - year2;
+        if (month1 > month2) {
+            m = month1 - month2;
+            d = day1 + maxday(month2, year2) - day2;
+            if (d > maxday(month2, year2))d -= maxday(month2, year2);
+            else --m;
+            --y;
+        }
+        else {
+            m = 12 - month1 + month2;
+            d = day2 + maxday(month1, year1) - day1;
+            if (d > maxday(month1, year1))d -= maxday(month1, year1);
+            else --m;
+        }
+    }
+    else {
+        y = year2 - year1;
+        if (month1 > month2) {
+            m = 12 - month1 + month2;
+            d = day1 + maxday(month2, year2) - day2;
+            if (d > maxday(month2, year2))d -= maxday(month2, year2);
+            else --m;
+            --y;
+        }
+        else {
+            m = month2 - month1;
+            d = maxday(month1, year1) - day1 + day2;
+            if (d > maxday(month1, year1))d -= maxday(month1, year1);
+            else --m;
+        }
+    }
+    sprintf(date, "%d days, %d month, %d years\n", d, m, y);
+    return date;
+}
